@@ -14,14 +14,21 @@ class GetCarBloc extends Bloc<GetCarEvent, GetCarState> {
       (event, emit) async {
         emit(GetCarDetailLoading());
         _carListStream = GetCarDetailUseCase(_carRepository).execute();
-        if (_carListStream != null) {
-          _carListStream!.listen((event) {
-            print('event => $event');
-            emit(GetCarDetailSuccess(carList: event));
-          });
-        } else {
-          emit(GetCarDetailNoData());
-        }
+        return emit.forEach(
+          _carListStream!,
+          onData: (data) {
+            return GetCarDetailSuccess(carList: data);
+          },
+          // onError:
+        );
+        // if (_carListStream != null) {
+        //   _carListStream!.listen((event) {
+        //     print('event => $event');
+        //     emit(GetCarDetailSuccess(carList: event));
+        //   });
+        // } else {
+        //   emit(GetCarDetailNoData());
+        // }
       },
     );
   }

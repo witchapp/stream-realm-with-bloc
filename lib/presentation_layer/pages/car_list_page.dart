@@ -19,8 +19,8 @@ class _CarListPageState extends State<CarListPage> {
 
   @override
   void initState() {
-    // context.read<GetCarBloc>().add(OnGetCarDetailEvent());
-    _carRepository = CarRepositoryImpl(localDataSource: widget.localDataSource);
+    context.read<GetCarBloc>().add(OnGetCarDetailEvent());
+    // _carRepository = CarRepositoryImpl(localDataSource: widget.localDataSource);
     super.initState();
   }
 
@@ -78,16 +78,7 @@ class _CarListPageState extends State<CarListPage> {
       appBar: AppBar(
         title: const Text('Car List Page'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            
-            carList,
-            ElevatedButton(onPressed: getAllCars, child: const Text('Get Cars')),
-          ],
-        ),
-      ),
+      body: carList,
     );
   }
 }
