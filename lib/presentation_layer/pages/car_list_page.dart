@@ -19,58 +19,17 @@ class _CarListPageState extends State<CarListPage> {
 
   @override
   void initState() {
-    context.read<GetCarBloc>().add(OnGetCarDetailEvent());
-    // _carRepository = CarRepositoryImpl(localDataSource: widget.localDataSource);
+    context.read<GetCarBloc>().add(const OnGetCarDetailEvent());
     super.initState();
   }
 
   void getAllCars() {
     context.read<GetCarBloc>().add(OnGetCarDetailEvent());
-    // setState(() {
-    //   GetCarDetailUseCase(_carRepository).execute();
-    // });
   }
 
-  Widget carList = BlocBuilder<GetCarBloc, GetCarState>(
-    builder: (context, state) {
-      print('state $state');
-      if (state is GetCarDetailLoading) {
-        return const CircularProgressIndicator();
-      }
-      if (state is GetCarDetailSuccess) {
-        print(state.carList);
-        if (state.carList.isEmpty) {
-          return const Center(
-            child: Text('No Data'),
-          );
-        }
-        if (state.carList.isNotEmpty) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ListView.separated(
-              itemBuilder: (context, index) {
-                String carModel = state.carList[index]!.model;
-                String carUsed = state.carList[index]!.kilometers.toString();
-                print('model => $carModel, car used => $carUsed');
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Model Name: $carModel'),
-                    Text('used(K.M.): $carUsed')
-                  ],
-                );
-              },
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: state.carList.length,
-            ),
-          );
-        }
-      }
-      return const Text('error');
-    },
-  );
-
-  
+  void getCarStatus(String carModel) {
+    context.read<GetCarStatusBloc>().add(OnGetCarStatusEvent(carModel));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +37,67 @@ class _CarListPageState extends State<CarListPage> {
       appBar: AppBar(
         title: const Text('Car List Page'),
       ),
-      body: carList,
+      body: BlocBuilder<GetCarBloc, GetCarState>(
+        builder: (context, state) {
+          print('state $state');
+          if (state is GetCarDetailLoading) {
+            return const CircularProgressIndicator();
+          }
+          if (state is GetCarDetailSuccess) {
+            print(state.carList);
+            if (state.carList.isEmpty) {
+              return const Center(
+                child: Text('No Data'),
+              );
+            }
+            if (state.carList.isNotEmpty) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: 
+                
+                
+                ListView.separated(
+                  itemBuilder: (context, index) {
+                    String carModel = state.carList[index]!.model;
+                    String carUsed =
+                        state.carList[index]!.kilometers.toString();
+                    print(
+                        'model => $carModel, car used => $carUsed, index => $index');
+                    getCarStatus(carModel);
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Model: $carModel'),
+                        Text('used: $carUsed'),
+                        carStatusWidget(index),
+                      ],
+                    );
+                  },
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemCount: state.carList.length,
+                ),
+              );
+            }
+          }
+          return const Text('error');
+        },
+      ),
+    );
+  }
+
+  Widget carStatusWidget(int carListindex) {
+    return BlocBuilder<GetCarStatusBloc, GetCarStatusState>(
+      builder: (BuildContext context, state) {
+        if (state is GetCarStatusSuccess) {
+          print('car status => ${state.carStatusList[carListindex]!.status}');
+          String status = state.carStatusList[carListindex]!.status;
+          return Text('Status: $status');
+        }
+        if (state is GetCarStatusNoData) {
+          return const Text('Stats: N/A');
+        }
+        return const SizedBox();
+      },
     );
   }
 }

@@ -1,4 +1,3 @@
-
 import 'package:realm_with_clean_architech/domain_layer/domain_layer.dart';
 
 class GetCarDetailUseCase {

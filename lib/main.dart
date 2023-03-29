@@ -8,7 +8,7 @@ import 'package:realm_with_clean_architech/presentation_layer/presentation_layer
 late Realm realm;
 late LocalDataSource localDataSource;
 void main() {
-  LocalConfiguration config = Configuration.local([Car.schema]);
+  LocalConfiguration config = Configuration.local([Car.schema, Status.schema]);
   realm = Realm(config);
   print(realm.config.path);
   localDataSource = LocalDataSourceImpl(realm);
@@ -21,10 +21,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => GetCarBloc(
-        CarRepositoryImpl(localDataSource: localDataSource),
-      ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => GetCarBloc(
+            CarRepositoryImpl(localDataSource: localDataSource),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => GetCarStatusBloc(
+            CarRepositoryImpl(localDataSource: localDataSource),
+          ),
+        ),
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(

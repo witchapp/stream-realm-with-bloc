@@ -24,4 +24,23 @@ class CarRepositoryImpl implements CarRepository {
     }
     return null;
   }
+
+  @override
+  Stream<List<CarStatusEntity?>>? getCarStatusByModel(String carModel) {
+    RealmResults<Status?> carStatusResult =
+        localDataSource.getCarStatusByCarModel(carModel);
+
+    if (carStatusResult.isNotEmpty) {
+      return carStatusResult.changes.asyncMap<List<CarStatusEntity?>>((event) {
+        List<CarStatusEntity> carStatusList = [];
+
+        for (Status? queriedStatus in event.results) {
+          carStatusList.add(CarStatusEntity(
+              status: queriedStatus!.status, carModel: queriedStatus.carModel));
+        }
+        return carStatusList;
+      });
+    }
+    return null;
+  }
 }
