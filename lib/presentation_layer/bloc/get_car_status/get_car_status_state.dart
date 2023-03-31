@@ -11,12 +11,12 @@ abstract class GetCarStatusState extends Equatable {
 class GetCarStatusInitial extends GetCarStatusState {}
 
 class GetCarStatusSuccess extends GetCarStatusState {
-  final List<CarStatusEntity?> carStatusList;
+  final List<CarStatusEntity?> carStatus;
 
-  const GetCarStatusSuccess({required this.carStatusList});
+  const GetCarStatusSuccess({required this.carStatus});
 
   @override
-  List<Object> get props => [carStatusList];
+  List<Object> get props => [carStatus];
 }
 
 class GetCarStatusNoData extends GetCarStatusState {

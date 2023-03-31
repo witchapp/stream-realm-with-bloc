@@ -5,7 +5,7 @@ class GetCarStatusUseCase {
 
   GetCarStatusUseCase(this._repository);
 
-  Stream<List<CarStatusEntity?>>? execute(String carModel) {
+  Stream<List<CarStatusEntity?>>? execute(Set<String> carModel) {
     return _repository.getCarStatusByModel(carModel);
   }
 }

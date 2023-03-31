@@ -15,6 +15,7 @@ class CarRepositoryImpl implements CarRepository {
     if (cars.isNotEmpty) {
       return cars.changes.asyncMap<List<CarEntity?>>((event) {
         List<CarEntity> carList = [];
+
         for (Car? car in event.results) {
           carList
               .add(CarEntity(model: car!.model, kilometers: car.kilometers!));
@@ -26,17 +27,16 @@ class CarRepositoryImpl implements CarRepository {
   }
 
   @override
-  Stream<List<CarStatusEntity?>>? getCarStatusByModel(String carModel) {
+  Stream<List<CarStatusEntity?>>? getCarStatusByModel(Set<String> carModel) {
     RealmResults<Status?> carStatusResult =
         localDataSource.getCarStatusByCarModel(carModel);
 
     if (carStatusResult.isNotEmpty) {
-      return carStatusResult.changes.asyncMap<List<CarStatusEntity?>>((event) {
-        List<CarStatusEntity> carStatusList = [];
-
+      List<CarStatusEntity> carStatusList = [];
+      return carStatusResult.changes.asyncMap<List<CarStatusEntity>>((event) {
+        carStatusList.clear();
         for (Status? queriedStatus in event.results) {
-          carStatusList.add(CarStatusEntity(
-              status: queriedStatus!.status, carModel: queriedStatus.carModel));
+          carStatusList.add(CarStatusEntity(status: queriedStatus!.status));
         }
         return carStatusList;
       });

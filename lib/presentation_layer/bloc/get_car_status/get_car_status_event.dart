@@ -8,7 +8,7 @@ abstract class GetCarStatusEvent extends Equatable {
 }
 
 class OnGetCarStatusEvent extends GetCarStatusEvent {
-  final String carModel;
+  final Set<String> carModel;
   const OnGetCarStatusEvent(this.carModel);
 
   @override

@@ -27,8 +27,8 @@ class _CarListPageState extends State<CarListPage> {
     context.read<GetCarBloc>().add(OnGetCarDetailEvent());
   }
 
-  void getCarStatus(String carModel) {
-    context.read<GetCarStatusBloc>().add(OnGetCarStatusEvent(carModel));
+  void getCarStatus(Set<String> carModelList) {
+    context.read<GetCarStatusBloc>().add(OnGetCarStatusEvent(carModelList));
   }
 
   @override
@@ -39,31 +39,28 @@ class _CarListPageState extends State<CarListPage> {
       ),
       body: BlocBuilder<GetCarBloc, GetCarState>(
         builder: (context, state) {
-          print('state $state');
           if (state is GetCarDetailLoading) {
             return const CircularProgressIndicator();
           }
           if (state is GetCarDetailSuccess) {
-            print(state.carList);
             if (state.carList.isEmpty) {
               return const Center(
                 child: Text('No Data'),
               );
             }
             if (state.carList.isNotEmpty) {
+              Set<String> carModelList = {};
+              for (var element in state.carList) {
+                carModelList.add("'${element!.model}'");
+              }
+              getCarStatus(carModelList);
               return Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: 
-                
-                
-                ListView.separated(
+                child: ListView.separated(
                   itemBuilder: (context, index) {
                     String carModel = state.carList[index]!.model;
                     String carUsed =
                         state.carList[index]!.kilometers.toString();
-                    print(
-                        'model => $carModel, car used => $carUsed, index => $index');
-                    getCarStatus(carModel);
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -85,13 +82,14 @@ class _CarListPageState extends State<CarListPage> {
     );
   }
 
-  Widget carStatusWidget(int carListindex) {
+  Widget carStatusWidget(int carStatusIndex) {
     return BlocBuilder<GetCarStatusBloc, GetCarStatusState>(
       builder: (BuildContext context, state) {
         if (state is GetCarStatusSuccess) {
-          print('car status => ${state.carStatusList[carListindex]!.status}');
-          String status = state.carStatusList[carListindex]!.status;
-          return Text('Status: $status');
+          // String status = 'N/A';
+          print('carStatusWidget: ${state.carStatus}');
+          return Text('Status: ${state.carStatus[carStatusIndex]!.status}');
+          // return Text('Status: $status');
         }
         if (state is GetCarStatusNoData) {
           return const Text('Stats: N/A');

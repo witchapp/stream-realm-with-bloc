@@ -14,11 +14,15 @@ class GetCarStatusBloc extends Bloc<GetCarStatusEvent, GetCarStatusState> {
 
   _getCarStatusByModel(
       OnGetCarStatusEvent event, Emitter<GetCarStatusState> emit) async {
+        List<CarStatusEntity> carStatusList = [];
     _carStatusStream =
         GetCarStatusUseCase(_carRepository).execute(event.carModel);
     return emit.forEach(
       _carStatusStream!,
-      onData: (data) => GetCarStatusSuccess(carStatusList: data),
+      onData: (data) {
+        print('bloc data => $data');
+        return GetCarStatusSuccess(carStatus: data);
+      },
       onError: (error, stackTrace) => GetCarStatusNoData(),
     );
   }
