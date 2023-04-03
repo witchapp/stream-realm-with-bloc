@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:realm/realm.dart';
 import 'package:realm_with_clean_architech/data_layer/data_layer.dart';
 import 'package:realm_with_clean_architech/domain_layer/domain_layer.dart';
+import 'package:realm_with_clean_architech/presentation_layer/bloc/cubit/get_status_cubit.dart';
 import 'package:realm_with_clean_architech/presentation_layer/presentation_layer.dart';
 
 late Realm realm;
@@ -30,6 +31,11 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => GetCarStatusBloc(
+            CarRepositoryImpl(localDataSource: localDataSource),
+          ),
+        ),
+         BlocProvider(
+          create: (context) => GetStatusCubit(
             CarRepositoryImpl(localDataSource: localDataSource),
           ),
         ),
